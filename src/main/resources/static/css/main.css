@@ -1,0 +1,77 @@
+.bg-image {
+    background-image : URL("../images/sikka-welcome-page.jpg");
+    bfilter: blur(8px);
+       -webkit-filter: blur(8px);
+       height: 100%;
+       background-position: center;
+       background-repeat: no-repeat;
+       background-size: cover;
+}
+
+body, html {
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.bg-text {
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+  color: white;
+  font-weight: bold;
+  border: 3px solid #f1f1f1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 30%;
+  padding: 20px;
+  text-align: center;
+}
+
+.loginNav{
+  overflow: hidden;
+  margin-bottom: 15px
+}
+.loginNav p{
+  background-color: whitesmoke;
+  padding: 14px 14px;
+  border: 3px solid rgba(0,0,0,0.4);
+  color: darkgray;
+  margin : auto;
+  text-decoration: none;
+  float: left;
+  padding: 20px 90px
+}
+
+
+#signUpForm input, #signInForm input{
+  padding-right: 30%;
+  margin-bottom: 2px;
+  padding-top: 10px;
+  padding-bottom: 10px
+}
+
+#signUpSubmit, #signInSubmit{
+  padding-left: 130px;
+  margin-top: 12px;
+  background-color: rgb(0,0,0,0.3);
+  color: whitesmoke;
+  border: none
+}
+#signIn,#signUp{
+  display:none
+}
+
+#signUp.active,#signIn.active{
+  display: block
+}
+
+.loginNav p:hover{
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0, 0.0);
+  color : whitesmoke
+}
