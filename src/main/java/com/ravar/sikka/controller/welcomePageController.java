@@ -2,49 +2,79 @@ package com.ravar.sikka.controller;
 
 import com.ravar.sikka.model.User;
 import com.ravar.sikka.repository.UserRepository;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class welcomePageController {
+
     @Autowired
     UserRepository userRepository;
 
     @RequestMapping(value = "/")
-    public String welcomeMessage(){
-        String name = "Rahul Verma";
-        return "welcome";
+    public ModelAndView welcomeMessage(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("welcome");
+        return modelAndView;
     }
+
     @ResponseBody
     @RequestMapping(value = "/signUp")
-    public String dbTest(@RequestParam(value = "userName") String userName, @RequestParam(value = "email") String email,
-                         @RequestParam(value = "password") String password, @RequestParam(value = "confirmPassword") String confirmPassword ){
-        String resp = "SUCCESS";
-        User user = new User();
-        user.setUserName(userName);
-        user.setEmail(email);
+    public ModelAndView signUp(@RequestParam(value = "userName") String userName,
+                               @RequestParam(value = "email") String email,
+                               @RequestParam(value = "password") String password,
+                               @RequestParam(value = "confirmPassword") String confirmPassword,
+                               ModelAndView modelAndView, HttpSession httpSession){
+
+        password = DigestUtils.sha256Hex(password);
+        confirmPassword = DigestUtils.sha256Hex(confirmPassword);
+
         if (password.equals(confirmPassword)){
-            user.setPassword(password);
+            int userCount = userRepository.checkUserByUserName(userName);
+            if (userCount > 0){
+                modelAndView.addObject("message", "Username already exists");
+                modelAndView.setViewName("error");
+            }else{
+                User user = new User();
+                user.setPassword(password);
+                user.setUserName(userName);
+                user.setEmail(email);
+                userRepository.save(user);
+                httpSession.setAttribute("userName", userName);
+                modelAndView.addObject("userName", userName);
+                modelAndView.setViewName("home");
+            }
         }else{
-            resp = "FAILED";
+            modelAndView.addObject("message", "Please check the password and try again");
+            modelAndView.setViewName("error");
         }
-        userRepository.save(user);
-        return resp;
+        return modelAndView;
     }
+
     @ResponseBody
     @RequestMapping(value = "/signIn")
-    public String dbGetTest(@RequestParam(value = "userName") String userName, @RequestParam(value = "password") String password){
-        List<User> users = userRepository.getUserByLogin(userName,password);
-        String userDetails = "No results found";
-        if(users!=null){
-            for(User user:users){
-                userDetails = "Email is "+user.getEmail();
-            }
+    public ModelAndView signIn(@RequestParam(value = "userName") String userName,
+                               @RequestParam(value = "password") String password, ModelAndView modelAndView){
+
+        password = DigestUtils.sha256Hex(password);
+        User user = userRepository.getUserByLogin(userName,password);
+        String user_name = "";
+        if(user!=null){
+            user_name = user.getUserName();
+            modelAndView.addObject("userName", user_name);
+            modelAndView.setViewName("home");
+        }else {
+            modelAndView.addObject("message", "The user does not exist");
+            modelAndView.setViewName("error");
         }
-        return userDetails;
+        return modelAndView;
     }
 }

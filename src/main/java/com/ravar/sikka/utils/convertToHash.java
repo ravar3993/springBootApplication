@@ -1,9 +1,14 @@
 package com.ravar.sikka.utils;
 
-public class encryption {
+import org.apache.commons.codec.digest.DigestUtils;
+
+public class convertToHash {
     private String inputString;
-    public encryption(String input){
+    public convertToHash(String input){
         this.inputString = input;
     }
-    public getEncryptedOutput()
+    public String getHash(){
+        String result = DigestUtils.sha256Hex(inputString);
+        return result;
+    }
 }

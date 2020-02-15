@@ -6,6 +6,7 @@
 <link rel="stylesheet" type="text/css" href="css/main.css">
 </Head>
 <Body>
-<h2>Welcome ${userName}</h2>
+<h2>Error occured!</h2>
+<h3>Message from server : ${message}</h3>
 </Body>
 </HTML>
